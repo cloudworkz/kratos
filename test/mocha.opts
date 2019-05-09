@@ -1,0 +1,4 @@
+--exit
+--reporter spec
+--timeout 1000
+test/**/*.test.js

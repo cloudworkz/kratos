@@ -3,19 +3,22 @@ const debug = Debug("service:service");
 
 import HttpServer from "./api/HttpServer";
 import { Metrics } from "./Metrics";
+import GoogleStorage from "./GoogleStorage";
 
 import { ServiceConfig } from "./interfaces";
 import * as pjson from "../package.json";
+import TransactionProcessor from "./TransactionProcessor";
 
 const GRACE_EXIT_MS = 1250;
 
 export default class Service {
 
-  private readonly httpServer: HttpServer;
-
   public readonly config: ServiceConfig;
   public readonly metrics: Metrics;
+  public readonly googleStorage: GoogleStorage;
+  public readonly transactionProcess: TransactionProcessor;
 
+  private readonly httpServer: HttpServer;
   private alive: boolean = true;
   private ready: boolean = false;
 
@@ -32,6 +35,8 @@ export default class Service {
     this.config = config;
     this.metrics = new Metrics(pjson.name, [], []);
     this.httpServer = new HttpServer(this.config.http, this);
+    this.googleStorage = new GoogleStorage(this.config.gcs);
+    this.transactionProcess = new TransactionProcessor(this);
   }
 
   private shutdownOnErrorIfNotProduction() {
@@ -92,6 +97,7 @@ export default class Service {
     this.metrics.registerDefault();
 
     await this.httpServer.start();
+    await this.googleStorage.init();
 
     this.setReadyState(true);
     debug("Running..");
@@ -104,6 +110,7 @@ export default class Service {
     this.setReadyState(false);
 
     this.httpServer.close();
+    this.transactionProcess.close();
     this.metrics.close();
   }
 

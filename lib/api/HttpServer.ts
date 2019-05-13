@@ -9,7 +9,7 @@ import * as pjson from "../../package.json";
 
 import Service from "../Service";
 import { HttpConfig } from "../interfaces";
-import { routeRoot } from "./routes";
+import { routeRoot, routeTransaction } from "./routes";
 
 import AccessControll from "./AccessControll";
 
@@ -83,6 +83,7 @@ export default class HttpServer {
     app.use(bodyParser.json());
 
     app.use("/", routeRoot(this.service));
+    app.use("/api/transaction", routeTransaction(this.service));
 
     this.server = await new Promise((resolve, reject) => {
       let server: any = null;

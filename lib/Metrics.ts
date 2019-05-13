@@ -16,7 +16,7 @@ export class Metrics {
   };
 
   constructor(prefix: string = "", defaultCounterLabels: string[] = [], defaultGaugeLabels: string[] = []) {
-    this.prefix = prefix;
+    this.prefix = this.cleanMetricName(prefix);
     this.defaultCounterLabels = defaultCounterLabels;
     this.defaultGaugeLabels = defaultGaugeLabels;
     this.register = new promRegistry();

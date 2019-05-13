@@ -7,7 +7,7 @@ const routeRoot = (service: Service) => {
 
   router.get("/", (req, res) => {
     res.json({
-      Hi: "Welcome stranger",
+      Hi: "Welcome to kratos!",
       parent: "/",
       self: "/",
       children: [
@@ -26,6 +26,7 @@ const routeRoot = (service: Service) => {
       parent: "/",
       self: "/api",
       children: [
+        "/api/transaction",
       ],
     });
   });

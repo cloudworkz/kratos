@@ -13,15 +13,20 @@
 
 ## What
 
-...
+Collect and stream mulitple chunks of a large file into a Google Cloud Storage (File) Bucket.
 
 ## How
 
-...
+You will need two services, a running instance of this one and a client implementation, which basically requires an HTTP server with 3 endpoints.
+You can find a sample client implementation in Java [here](https://github.com/cloudworkz/kratos-pendant).
 
-## Why
+Each transfer is handled in a "transaction" you can request such by calling the `POST: /api/transaction/run` (as mentioned below).
+The service will then open up a stream to the GCS file (filename will be the transactinId) in the configured bucket, it will afterwards
+walk through all the provided chunks e.g. `chunks: 2`, will result in 3 calls `/request/{transactionId}/chunk/0`, `/request/{transactionId}/chunk/1`
+and `/request/{transactionId}/chunk/2` while streaming the response into the GCS file. During start and end of such transactions the `/start` and `/ack`
+endpoints will be called in the service provider.
 
-...
+The service can handle multiple transactions at the same time, calling the endpoint `POST: /api/transaction/run` with the same transactionId again, will trigger no actions whatsoever, if the transaction is still running.
 
 ## Requirements
 
@@ -51,7 +56,23 @@ Checkout the API quick start or the setup infos below.
 
 ## API Quick Start
 
-...
+Basically there are two available api endpoints, `POST: /api/transaction/run` to run a transaction
+and `GET: /api/transaction/status` to check all currently running transactions.
+
+Triggering a sample transaction might look like this:
+
+```bash
+curl -X POST \
+  http://localhost:1919/api/transaction/run \
+  -H 'Content-Type: application/json' \
+  -d '{
+	"transactionId": "blablabla",
+	"chunks": 3,
+	"baseUrl": "http://localhost:8080",
+	"extension": "parquet",
+	"contentType": "application/octet-stream"
+}'
+```
 
 ## Setup Info
 

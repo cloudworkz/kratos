@@ -11,7 +11,7 @@
 
 ## What
 
-Collect and stream mulitple chunks of a large file into a Google Cloud Storage (File) Bucket.
+Collect and stream chunked files over http and stream them into Google Cloud Storage.
 
 ## How
 

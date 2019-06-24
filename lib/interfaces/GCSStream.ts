@@ -1,5 +1,5 @@
 export interface GCSStream {
-  promise: Promise<{}>;
+  promise: Promise<unknown>;
   end: () => void;
   write: (chunk: any) => void;
 }
